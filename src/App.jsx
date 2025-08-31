@@ -2,23 +2,21 @@ import { useEffect, useState } from "react";
 import { fetchProfiles } from "./api/profiles";
 import Card from "./components/Card";
 import SearchBar from "./components/Search";
-// import SortDropdown from "./components/Sort";
 import SortDropdown from "./components/Sort";
 import Fuse from "fuse.js";
-// import Select from "react-select";
 
 function App() {
   const [profiles, setProfiles] = useState([]);
   const [visibleCount, setVisibleCount] = useState(20);
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState("none");
-
-  // const filtered = profiles.filter((i) =>
-  //   i.name.toLowerCase().includes(query.toLowerCase())
-  // );
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchProfiles(100, 1).then(setProfiles);
+    fetchProfiles(100, 1).then((data) => {
+      setProfiles(data);
+      setLoading(false);
+    });
   }, []);
 
   const fuse = new Fuse(profiles, {
@@ -37,10 +35,18 @@ function App() {
 
   const visibleProfiles = sorted.slice(0, visibleCount);
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <div className="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-gray-50 flex flex-col items-center">
+    <div className="bg-gray-50 flex flex-col items-center min-h-screen">
       <div className="w-full max-w-7xl p-6">
-        <h1 className="text-3xl font-semibold mt-4 mb-8 text-left">
+        <h1 className="text-3xl text-gray-800 font-poppins font-semibold mt-4 mb-8 text-left">
           Profiles overview
         </h1>
 
@@ -71,9 +77,8 @@ function App() {
       </div>
       {results.length > 0 && (
         <div className="flex flex-col justify-center items-center pb-4">
-          <p className="text-sm text-gray-500 mt-4 text-center">
-            Currently showing {visibleProfiles.length} / {results.length}{" "}
-            profiles
+          <p className="text-sm text-gray-500 mt-8 text-center">
+            Showing {visibleProfiles.length} / {results.length} profiles
           </p>
 
           {visibleCount < results.length && (

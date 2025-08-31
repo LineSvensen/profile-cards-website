@@ -10,8 +10,7 @@ export default function SortDropdown({ sortBy, setSortBy }) {
   const selectedOption = options.find((opt) => opt.value === sortBy);
 
   return (
-    <div className="w-48 text-sm">
-      {" "}
+    <div className="w-48">
       <Select
         value={selectedOption}
         onChange={(opt) => setSortBy(opt?.value || "none")}
@@ -29,6 +28,10 @@ export default function SortDropdown({ sortBy, setSortBy }) {
             cursor: "pointer",
             boxShadow: state.isFocused ? "0 0 0 2px #14B8A6" : "none",
             "&:hover": { borderColor: "#14B8A6" },
+          }),
+          placeholder: (base) => ({
+            ...base,
+            color: "#1f2937",
           }),
           option: (base, state) => ({
             ...base,
